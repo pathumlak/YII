@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\EntryForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -12,9 +13,21 @@ use app\models\ContactForm;
 
 class SiteController extends Controller
 {
+    // say hello
     public function actionSay($message = 'hello')
     {
         return $this->render('say', ['message' => $message]);
+    }
+
+    // forms
+    public function actionEntry()
+    {
+        $model = new EntryForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            return $this->render('entry-confirm', ['model' => $model]);
+        } else {
+            return $this->render('entry', ['model' => $model]);
+        }
     }
     /**
      * {@inheritdoc}
@@ -26,18 +39,18 @@ class SiteController extends Controller
                 'class' => AccessControl::class,
                 'only' => ['logout'],
                 'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
+                        [
+                            'actions' => ['logout'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
-                ],
             ],
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'logout' => ['post'],
-                ],
+                        'logout' => ['post'],
+                    ],
             ],
         ];
     }
